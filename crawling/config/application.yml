@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: crawling
+
+  # application-secret.yml 파일을 추가로 읽어오도록 설정
+  profiles:
+    include: secret 
+
+  # 데이터베이스 연결 기본 설정
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    # url, username, password는 application-secret.yml에서 주입됩니다.
+
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: update 
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MariaDBDialect
+        highlight_sql: true
+
+# 백엔드 서버 포트
+server:
+  port: 8080
