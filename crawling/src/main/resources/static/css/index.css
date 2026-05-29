@@ -1,13 +1,27 @@
+/* 라이트 모드 (기본, 모던 슬레이트 & 인디고) */
 :root {
-    --primary-color: #4F46E5;
-    --primary-hover: #4338CA;
-    --bg-color: #F3F4F6;
+    --primary-color: #6366F1;
+    --primary-hover: #4F46E5;
+    --bg-color: #F1F5F9;
     --card-bg: #FFFFFF;
-    --text-main: #111827;
-    --text-muted: #6B7280;
+    --text-main: #1E293B;
+    --text-muted: #64748B;
     --accent-red: #EF4444;
-    --border-color: #E5E7EB;
-    --glass-bg: rgba(255, 255, 255, 0.85);
+    --border-color: #E2E8F0;
+    --glass-bg: rgba(241, 245, 249, 0.85);
+}
+
+/* 다크 모드 (프리미엄 다크 네이비) */
+[data-theme='dark'] {
+    --primary-color: #818CF8;
+    --primary-hover: #6366F1;    
+    --bg-color: #0F172A;
+    --card-bg: #1E293B;
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --accent-red: #F87171;
+    --border-color: #334155;
+    --glass-bg: rgba(15, 23, 42, 0.75);
 }
 
 * {
@@ -43,17 +57,47 @@ body {
     padding: 0 2rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 1.2rem;
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.spacer {
+    width: 100px; /* 버튼과 대칭을 맞추기 위한 여백 */
+}
+
+.theme-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-main);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.theme-btn:hover {
+    background: var(--bg-color);
 }
 
 h1 {
     font-size: 2rem;
     font-weight: 800;
     letter-spacing: -0.05em;
-    background: linear-gradient(135deg, #4F46E5, #EC4899);
+    background: linear-gradient(135deg, #6366F1, #8B5CF6); /* 인디고 -> 바이올렛 (가장 고급스러운 조합) */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin: 0 auto;
 }
 
 /* 카테고리 필터 버튼 */
@@ -85,9 +129,9 @@ h1 {
 
 #category-filter button.active {
     background-color: var(--text-main);
-    color: white;
+    color: var(--bg-color);
     border-color: var(--text-main);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
 /* 인트로 섹션 */
@@ -117,11 +161,13 @@ h1 {
     background: var(--card-bg);
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    /* 배경색과 명확히 구분되도록 옅은 테두리 추가 */
+    border: 1px solid #E5E7EB; 
+    /* 그림자를 약간 더 선명하게 주어 입체감 부여 */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(255,255,255,0.8);
     position: relative;
     cursor: pointer;
 }
@@ -274,7 +320,7 @@ h1 {
 
 .sold-out-overlay span {
     background: var(--text-main);
-    color: white;
+    color: var(--bg-color);
     padding: 0.8rem 1.5rem;
     border-radius: 8px;
     font-weight: 800;
@@ -321,7 +367,7 @@ h1 {
 
 .page-btn.active {
     background: var(--text-main);
-    color: white;
+    color: var(--bg-color);
     border-color: var(--text-main);
 }
 
