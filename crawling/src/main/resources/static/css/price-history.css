@@ -1,0 +1,141 @@
+/* 가격 변동 페이지 전용 레이아웃 */
+.history-main {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* 돌아가기 버튼 */
+.back-btn {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: var(--card-bg);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.back-btn:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateX(-3px);
+}
+
+/* 상단 상품 요약 정보 */
+.product-summary {
+    display: flex;
+    gap: 1.5rem;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    align-items: center;
+}
+
+.product-summary img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.summary-info h2 {
+    font-size: 1.2rem;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.summary-info .current-price {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent-red);
+}
+
+/* 히스토리 리스트 카드 */
+.history-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.history-card h3 {
+    font-size: 1.2rem;
+    color: var(--text-main);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* 가격 변동 리스트 */
+.price-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.price-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px dashed var(--border-color);
+    align-items: center;
+}
+
+.price-list li:last-child {
+    border-bottom: none;
+}
+
+.date {
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.price-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.price-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-main);
+}
+
+/* 등락 표시 뱃지 */
+.trend {
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    min-width: 70px;
+    text-align: center;
+}
+
+.trend.down {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3B82F6; /* 파란색 (가격 하락 = 좋은 것) */
+}
+
+.trend.up {
+    background: rgba(239, 68, 68, 0.1);
+    color: #EF4444; /* 빨간색 (가격 상승 = 안좋은 것) */
+}
+
+.trend.same {
+    background: var(--bg-color);
+    color: var(--text-muted);
+}
