@@ -4,43 +4,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>상품 모아보기 (크롤링 웹 서비스)</title>
-    <!-- 공통 CSS 및 메인 페이지 전용 CSS 연결 -->
+    <!-- 프리미엄 폰트: Pretendard -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
-    <header>
-        <h1>🛒 상품 모아보기</h1>
-        <nav id="category-filter">
-            <!-- 카테고리 필터 버튼들이 여기에 동적으로 들어갈 예정 -->
-            <button class="active" data-category="all">전체</button>
-            <button data-category="생필품">생필품</button>
-        </nav>
+    <header class="glass-header">
+        <div class="header-content">
+            <h1>🛍️ 알짜배기 핫딜 모음</h1>
+            <nav id="category-filter">
+                <button class="active" data-category="all">전체보기</button>
+                <button data-category="생필품">🧻 생필품</button>
+                <button data-category="가전디지털">💻 가전/디지털</button>
+                <button data-category="식품">🍎 식품</button>
+            </nav>
+        </div>
     </header>
 
     <main>
-        <!-- 상품 카드들이 표시될 그리드 컨테이너 -->
+        <section class="intro-section">
+            <p class="subtitle">AI가 분석한 오늘의 로켓배송 특가 상품을 한눈에 확인하세요.</p>
+        </section>
+
+        <!-- 상품 카드 그리드 -->
         <div id="product-grid" class="product-grid">
-            <!-- 카드 예시 (자바스크립트로 동적 렌더링 예정) -->
-            <!--
-            <div class="product-card">
-                <img src="..." alt="상품명">
-                <h3>상품명</h3>
-                <p class="price-info">
-                    <span class="discount-rate">50%</span>
-                    <span class="price">10,000원</span>
-                    <span class="original-price">20,000원</span>
-                </p>
-            </div>
-            -->
+            
+            <!-- 샘플 카드 1 (일반 할인 상품) -->
+            <article class="product-card">
+                <div class="image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=600&auto=format&fit=crop" alt="고급 화장지 세트">
+                    <span class="badge badge-rocket">🚀 로켓배송</span>
+                </div>
+                <div class="product-info">
+                    <span class="category-text">생필품</span>
+                    <h3 class="product-name">프리미엄 천연 펄프 3겹 롤화장지 30롤</h3>
+                    <div class="price-container">
+                        <div class="price-row">
+                            <span class="discount-rate">45%</span>
+                            <span class="current-price">15,900<span class="unit">원</span></span>
+                        </div>
+                        <span class="original-price">28,900원</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="review-count">⭐ 리뷰 1,204</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 샘플 카드 2 (초특가 상품) -->
+            <article class="product-card highlight-card">
+                <div class="image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=600&auto=format&fit=crop" alt="스마트 워치">
+                    <span class="badge badge-hot">🔥 초특가</span>
+                </div>
+                <div class="product-info">
+                    <span class="category-text">가전/디지털</span>
+                    <h3 class="product-name">2024년형 울트라 스마트 워치 티타늄</h3>
+                    <div class="price-container">
+                        <div class="price-row">
+                            <span class="discount-rate">68%</span>
+                            <span class="current-price">99,000<span class="unit">원</span></span>
+                        </div>
+                        <span class="original-price">309,000원</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="review-count">⭐ 리뷰 4,592</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 샘플 카드 3 (품절 상품) -->
+            <article class="product-card sold-out">
+                <div class="image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=600&auto=format&fit=crop" alt="유기농 쌀">
+                    <div class="sold-out-overlay"><span>일시품절</span></div>
+                </div>
+                <div class="product-info">
+                    <span class="category-text">식품</span>
+                    <h3 class="product-name">햅쌀 프리미엄 유기농 백미 10kg</h3>
+                    <div class="price-container">
+                        <div class="price-row">
+                            <span class="discount-rate sold-out-text">품절</span>
+                            <span class="current-price">32,500<span class="unit">원</span></span>
+                        </div>
+                        <span class="original-price">35,000원</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="review-count">⭐ 리뷰 856</span>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- 샘플 카드 4 -->
+            <article class="product-card">
+                <div class="image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=600&auto=format&fit=crop" alt="탄산수">
+                </div>
+                <div class="product-info">
+                    <span class="category-text">식품</span>
+                    <h3 class="product-name">레몬 탄산수 제로 칼로리 500ml x 20입</h3>
+                    <div class="price-container">
+                        <div class="price-row">
+                            <span class="discount-rate">30%</span>
+                            <span class="current-price">12,900<span class="unit">원</span></span>
+                        </div>
+                        <span class="original-price">18,500원</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="review-count">⭐ 리뷰 3,211</span>
+                    </div>
+                </div>
+            </article>
+
         </div>
 
         <!-- 하단 페이지네이션 -->
         <div id="pagination" class="pagination">
-            <!-- 페이지 번호 (1, 2, 3...) -->
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">다음 〉</button>
         </div>
     </main>
 
-    <!-- 메인 페이지 전용 JS 연결 -->
     <script src="/js/index.js"></script>
 </body>
 </html>
