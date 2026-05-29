@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 모아보기 (크롤링 웹 서비스)</title>
+    <!-- 공통 CSS 및 메인 페이지 전용 CSS 연결 -->
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+    <header>
+        <h1>🛒 상품 모아보기</h1>
+        <nav id="category-filter">
+            <!-- 카테고리 필터 버튼들이 여기에 동적으로 들어갈 예정 -->
+            <button class="active" data-category="all">전체</button>
+            <button data-category="생필품">생필품</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 상품 카드들이 표시될 그리드 컨테이너 -->
+        <div id="product-grid" class="product-grid">
+            <!-- 카드 예시 (자바스크립트로 동적 렌더링 예정) -->
+            <!--
+            <div class="product-card">
+                <img src="..." alt="상품명">
+                <h3>상품명</h3>
+                <p class="price-info">
+                    <span class="discount-rate">50%</span>
+                    <span class="price">10,000원</span>
+                    <span class="original-price">20,000원</span>
+                </p>
+            </div>
+            -->
+        </div>
+
+        <!-- 하단 페이지네이션 -->
+        <div id="pagination" class="pagination">
+            <!-- 페이지 번호 (1, 2, 3...) -->
+        </div>
+    </main>
+
+    <!-- 메인 페이지 전용 JS 연결 -->
+    <script src="/js/index.js"></script>
+</body>
+</html>
