@@ -76,13 +76,14 @@ public class UserController {
                 .map(org.springframework.security.core.GrantedAuthority::getAuthority)
                 .collect(java.util.stream.Collectors.toList());
                 
-        return ResponseEntity.ok(Map.of(
-                "username", user.getUsername(),
-                "name", user.getName(),
-                "email", user.getEmail(),
-                "createdAt", user.getCreatedAt(),
-                "roles", roles
-        ));
+        java.util.Map<String, Object> responseMap = new java.util.HashMap<>();
+        responseMap.put("username", user.getUsername());
+        responseMap.put("name", user.getName());
+        responseMap.put("email", user.getEmail());
+        responseMap.put("createdAt", user.getCreatedAt());
+        responseMap.put("roles", roles);
+
+        return ResponseEntity.ok(responseMap);
     }
 
     @PutMapping("/users/me")

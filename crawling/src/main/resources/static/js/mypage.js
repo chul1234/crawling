@@ -26,26 +26,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 마이페이지 전용 로직 ---
 
-    // 1. 내 정보 불러오기
-    fetch('/api/users/me')
-        .then(res => {
-            if (!res.ok) {
-                alert('로그인이 필요합니다.');
-                window.location.href = '/login.html';
-                throw new Error('Not authenticated');
-            }
-            return res.json();
-        })
-        .then(data => {
-            document.getElementById('info-username').textContent = data.username;
-            const date = new Date(data.createdAt);
-            document.getElementById('info-created').textContent = date.toLocaleDateString();
+    // 1-2. 프로필 정보 렌더링 함수
+    function loadUserInfo() {
+        fetch('/api/users/me')
+            .then(res => {
+                if (!res.ok) {
+                    if (res.status === 401 || res.status === 403) {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/login.html';
+                    } else {
+                        console.error('서버 오류: ', res.status);
+                        alert('사용자 정보를 불러오는데 실패했습니다.');
+                    }
+                    throw new Error('Fetch failed');
+                }
+                return res.json();
+            })
+            .then(data => {
+                // 화면 요약 정보 업데이트
+                document.getElementById('info-username').textContent = data.username;
+                document.getElementById('info-name').textContent = data.name || '-';
+                document.getElementById('info-email').textContent = data.email || '-';
+                const date = new Date(data.createdAt);
+                document.getElementById('info-created').textContent = date.toLocaleDateString();
 
-            // 폼 초기값 세팅
-            document.getElementById('name').value = data.name || '';
-            document.getElementById('email').value = data.email || '';
-        })
-        .catch(console.error);
+                // 모달 폼 초기값 세팅
+                document.getElementById('name').value = data.name || '';
+                document.getElementById('email').value = data.email || '';
+            })
+            .catch(console.error);
+    }
+    loadUserInfo();
+
+    // 1-3. 모달 제어 로직
+    const editModal = document.getElementById('edit-modal');
+    const openModalBtn = document.getElementById('open-edit-modal-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+
+    openModalBtn.addEventListener('click', () => {
+        editModal.style.display = 'flex';
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        editModal.style.display = 'none';
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === editModal) {
+            editModal.style.display = 'none';
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+        }
+    });
 
     // 2. 정보 수정 제출
     document.getElementById('profile-update-form').addEventListener('submit', async (e) => {
@@ -62,9 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 alert('정보가 성공적으로 수정되었습니다.');
-                // 비밀번호 필드 초기화
+                editModal.style.display = 'none';
                 document.getElementById('currentPassword').value = '';
                 document.getElementById('newPassword').value = '';
+                loadUserInfo(); // 요약 화면 갱신
             } else {
                 const errorMsg = await response.text();
                 alert('수정 실패: ' + errorMsg);

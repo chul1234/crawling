@@ -69,6 +69,52 @@
             padding: 50px 0;
             color: var(--text-secondary);
         }
+
+        /* 모달 스타일 추가 */
+        
+        /* 모달 스타일 추가 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(30, 30, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        [data-theme='light'] .modal-content {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -87,38 +133,18 @@
 
     <main>
         <div class="mypage-container">
-            <!-- 좌측: 내 정보 관리 -->
+            <!-- 좌측: 내 정보 요약 -->
             <aside class="profile-panel">
-                <h2 class="panel-title">내 정보 관리</h2>
+                <h2 class="panel-title">내 정보</h2>
                 
                 <div id="user-info-display">
                     <div class="info-row"><strong>아이디:</strong> <span id="info-username">로딩중...</span></div>
+                    <div class="info-row"><strong>이름:</strong> <span id="info-name">로딩중...</span></div>
+                    <div class="info-row"><strong>이메일:</strong> <span id="info-email">로딩중...</span></div>
                     <div class="info-row"><strong>가입일:</strong> <span id="info-created">로딩중...</span></div>
                 </div>
 
-                <form id="profile-update-form" style="margin-top: 30px;">
-                    <div class="input-group">
-                        <label for="name">이름 (실명)</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="email">이메일 주소</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-
-                    <h3 style="margin: 20px 0 10px 0; font-size: 1.1rem; color: var(--text-primary);">비밀번호 변경 (선택)</h3>
-                    <div class="input-group">
-                        <label for="currentPassword">현재 비밀번호 (변경 시 필수)</label>
-                        <input type="password" id="currentPassword" name="currentPassword" placeholder="기존 비밀번호">
-                    </div>
-                    <div class="input-group">
-                        <label for="newPassword">새 비밀번호 (특수문자 포함 8자 이상)</label>
-                        <input type="password" id="newPassword" name="newPassword" placeholder="새 비밀번호">
-                    </div>
-
-                    <button type="submit" class="login-submit-btn">정보 수정하기</button>
-                </form>
+                <button id="open-edit-modal-btn" class="login-submit-btn" style="margin-top: 20px;">정보 수정하기</button>
             </aside>
 
             <!-- 우측: 관심 상품 (찜하기) 목록 -->
@@ -130,6 +156,42 @@
             </section>
         </div>
     </main>
+
+    <!-- 팝업 모달 (작은 사각형) -->
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="margin: 0; font-size: 1.2rem;">프로필 수정</h3>
+                <button id="close-modal-btn" class="modal-close">&times;</button>
+            </div>
+            
+            <form id="profile-update-form">
+                <div class="input-group">
+                    <label for="name">이름 (실명)</label>
+                    <input type="text" id="name" name="name" required style="background: rgba(100,100,100,0.1); border: 1px solid rgba(100,100,100,0.3);">
+                </div>
+                
+                <div class="input-group">
+                    <label for="email">이메일 주소</label>
+                    <input type="email" id="email" name="email" required style="background: rgba(100,100,100,0.1); border: 1px solid rgba(100,100,100,0.3);">
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid rgba(100,100,100,0.2); margin: 20px 0;">
+                <label style="display: block; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-secondary);">비밀번호 변경 (선택)</label>
+
+                <div class="input-group">
+                    <label for="currentPassword">현재 비밀번호</label>
+                    <input type="password" id="currentPassword" name="currentPassword" placeholder="기존 비밀번호 입력" style="background: rgba(100,100,100,0.1); border: 1px solid rgba(100,100,100,0.3);">
+                </div>
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label for="newPassword">새 비밀번호</label>
+                    <input type="password" id="newPassword" name="newPassword" placeholder="특수문자 포함 8자 이상" style="background: rgba(100,100,100,0.1); border: 1px solid rgba(100,100,100,0.3);">
+                </div>
+
+                <button type="submit" class="login-submit-btn" style="width: 100%;">저장하기</button>
+            </form>
+        </div>
+    </div>
 
     <script src="/js/mypage.js"></script>
 </body>
