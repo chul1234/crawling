@@ -67,10 +67,55 @@ public class UserController {
         }
         
         String username = authentication.getName();
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(401).body("유저를 찾을 수 없습니다.");
+        }
+
         java.util.List<String> roles = authentication.getAuthorities().stream()
                 .map(org.springframework.security.core.GrantedAuthority::getAuthority)
                 .collect(java.util.stream.Collectors.toList());
                 
-        return ResponseEntity.ok(Map.of("username", username, "roles", roles));
+        return ResponseEntity.ok(Map.of(
+                "username", user.getUsername(),
+                "name", user.getName(),
+                "email", user.getEmail(),
+                "createdAt", user.getCreatedAt(),
+                "roles", roles
+        ));
+    }
+
+    @PutMapping("/users/me")
+    public ResponseEntity<?> updateCurrentUser(@RequestBody Map<String, String> request, org.springframework.security.core.Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("로그인되지 않았습니다.");
+        }
+        
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("유저를 찾을 수 없습니다.");
+        }
+
+        String name = request.get("name");
+        String email = request.get("email");
+        String currentPassword = request.get("currentPassword");
+        String newPassword = request.get("newPassword");
+
+        if (name != null && !name.trim().isEmpty()) user.setName(name);
+        if (email != null && !email.trim().isEmpty()) user.setEmail(email);
+
+        if (newPassword != null && !newPassword.trim().isEmpty()) {
+            if (currentPassword == null || !passwordEncoder.matches(currentPassword, user.getPassword())) {
+                return ResponseEntity.badRequest().body("현재 비밀번호가 일치하지 않습니다.");
+            }
+            if (newPassword.length() < 8 || !newPassword.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) {
+                return ResponseEntity.badRequest().body("새 비밀번호는 특수문자를 포함하여 8자 이상이어야 합니다.");
+            }
+            user.setPassword(passwordEncoder.encode(newPassword));
+        }
+
+        userRepository.save(user);
+        return ResponseEntity.ok("정보가 성공적으로 수정되었습니다.");
     }
 }

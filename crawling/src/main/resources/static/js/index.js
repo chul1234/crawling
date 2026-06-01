@@ -41,15 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 현재 사용자 권한 확인 후 관리자 탭 노출
+    // 현재 사용자 권한 확인 후 관리자/마이페이지 탭 노출
     fetch('/api/users/me')
         .then(res => res.json())
         .then(data => {
+            // 로그인 상태이면 마이페이지 탭 노출
+            if (data && data.username) {
+                document.getElementById('mypage-tab').style.display = 'inline-block';
+            }
+            // 관리자면 관리자 탭 추가 노출
             if (data && data.roles && data.roles.includes('ROLE_ADMIN')) {
                 document.getElementById('admin-tab').style.display = 'inline-block';
             }
         })
-        .catch(err => console.log('사용자 정보 로드 실패 (아마 비로그인 상태이거나 오류)', err));
+        .catch(err => console.log('사용자 정보 로드 실패 (비로그인 상태)', err));
 
     // API 호출 및 데이터 렌더링 관련 상태 변수
     let currentCategory = 'all';
@@ -110,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${p.imageUrl || 'https://via.placeholder.com/600x600?text=No+Image'}" alt="${p.name}">
                     ${badge}
                     ${overlay}
+                    <button class="bookmark-btn" onclick="toggleBookmark(${p.id}, this)" style="position: absolute; bottom: 10px; right: 10px; background: rgba(255,255,255,0.8); border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">🤍</button>
                 </div>
                 <div class="product-info">
                     <span class="category-text">${p.category || '기타'}</span>
@@ -169,3 +175,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // 초기 데이터 로드
     fetchProducts();
 });
+
+// 찜하기(하트) 토글 글로벌 함수
+window.toggleBookmark = function(productId, btnElement) {
+    fetch(`/api/bookmarks/${productId}`, { method: 'POST' })
+        .then(res => {
+            if (res.status === 401) {
+                alert('로그인이 필요합니다.');
+                window.location.href = '/login.html';
+                throw new Error('Not logged in');
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data.status === 'added') {
+                btnElement.innerHTML = '❤️';
+                alert('찜 목록에 추가되었습니다!');
+            } else if (data.status === 'removed') {
+                btnElement.innerHTML = '🤍';
+            }
+        })
+        .catch(console.error);
+};
