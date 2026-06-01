@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 알짜배기 핫딜 모음</title>
+    <!-- 프리미엄 폰트: Pretendard -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    <!-- 상단 헤더 (글래스모피즘) -->
+    <header class="glass-header">
+        <div class="header-content">
+            <div class="header-top">
+                <a href="/login.html" class="back-btn">← 뒤로가기</a>
+                <h1>🛍️ 신규 회원가입</h1>
+                <button id="theme-toggle" class="theme-btn">🌙 다크 모드</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="login-main">
+        <div class="login-container glass-panel">
+            <div class="login-header">
+                <h2>환영합니다</h2>
+                <p>간단한 정보 입력으로 가입을 완료하세요.</p>
+            </div>
+            
+            <form id="signup-form" action="/api/signup" method="POST">
+                <div class="input-group">
+                    <label for="username">아이디 (50자 이내)</label>
+                    <input type="text" id="username" name="username" placeholder="사용할 아이디를 입력하세요" required autocomplete="username">
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required autocomplete="new-password">
+                </div>
+                
+                <button type="submit" class="login-submit-btn">가입하기</button>
+            </form>
+            
+            <div class="login-footer">
+                <p>이미 계정이 있으신가요? <a href="/login.html">로그인하기</a></p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 다크 모드 토글 로직
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        
+        function setTheme(isDark) {
+            if (isDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeToggleBtn.innerHTML = '☀️ 라이트 모드';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                themeToggleBtn.innerHTML = '🌙 다크 모드';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // 초기 테마 로드
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            setTheme(true);
+        } else {
+            setTheme(false);
+        }
+
+        // 버튼 클릭 이벤트
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            setTheme(!isDark);
+        });
+
+        // 폼 제출 처리 (AJAX)
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('회원가입이 완료되었습니다! 로그인해 주세요.');
+                    window.location.href = '/login.html';
+                } else {
+                    const result = await response.text();
+                    alert('회원가입 실패: ' + result);
+                }
+            } catch (error) {
+                alert('서버와 통신 중 오류가 발생했습니다.');
+            }
+        });
+    </script>
+</body>
+</html>
