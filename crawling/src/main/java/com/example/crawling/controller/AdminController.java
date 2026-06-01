@@ -5,8 +5,12 @@ import com.example.crawling.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import com.example.crawling.entity.Role;
 import com.example.crawling.repository.RoleRepository;
+import com.example.crawling.repository.BookmarkRepository;
+import com.example.crawling.repository.ProductRepository;
+import com.example.crawling.service.CrawlingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.List;
@@ -20,6 +24,9 @@ public class AdminController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BookmarkRepository bookmarkRepository;
+    private final ProductRepository productRepository;
+    private final CrawlingService crawlingService;
 
     @GetMapping("/users")
     public List<UserDto> getAllUsers() {
@@ -100,6 +107,61 @@ public class AdminController {
 
         userRepository.save(user);
         return ResponseEntity.ok("권한이 성공적으로 변경되었습니다.");
+    }
+
+    @DeleteMapping("/users/{id}")
+    @Transactional
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("유저를 찾을 수 없습니다.");
+        }
+        
+        // 1. 유저의 찜 목록 물리적 삭제 (FK가 없으므로 수동)
+        bookmarkRepository.deleteByUsername(user.getUsername());
+        
+        // 2. 권한 관계 매핑 삭제
+        user.getRoles().clear();
+        userRepository.save(user); // 중간 테이블 정리
+
+        // 3. 최종 유저 삭제
+        userRepository.delete(user);
+        return ResponseEntity.ok("유저가 성공적으로 삭제되었습니다.");
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<?> getStats() {
+        long userCount = userRepository.count();
+        long productCount = productRepository.count();
+        long bookmarkCount = bookmarkRepository.count();
+        return ResponseEntity.ok(Map.of(
+            "users", userCount,
+            "products", productCount,
+            "bookmarks", bookmarkCount
+        ));
+    }
+
+    @GetMapping("/products")
+    public ResponseEntity<?> getAllProducts() {
+        return ResponseEntity.ok(productRepository.findAll());
+    }
+
+    @DeleteMapping("/products/{id}")
+    @Transactional
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        if (!productRepository.existsById(id)) {
+            return ResponseEntity.badRequest().body("상품을 찾을 수 없습니다.");
+        }
+        bookmarkRepository.deleteByProductId(id);
+        productRepository.deleteById(id);
+        return ResponseEntity.ok("상품이 삭제되었습니다.");
+    }
+
+    @PostMapping("/crawling/trigger")
+    public ResponseEntity<?> triggerCrawling() {
+        // 실제 크롤링 로직 실행 (Playwright)
+        crawlingService.crawlCoupang();
+        return ResponseEntity.ok("크롤링 작업이 성공적으로 요청되었습니다.");
     }
 
     public record UserDto(Long id, String username, String email, String name, List<String> roles, java.time.LocalDateTime createdAt) {}
