@@ -30,13 +30,23 @@
             
             <form id="signup-form" action="/api/signup" method="POST">
                 <div class="input-group">
-                    <label for="username">아이디 (50자 이내)</label>
+                    <label for="username">아이디 (영문/숫자)</label>
                     <input type="text" id="username" name="username" placeholder="사용할 아이디를 입력하세요" required autocomplete="username">
                 </div>
                 
                 <div class="input-group">
-                    <label for="password">비밀번호</label>
-                    <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required autocomplete="new-password">
+                    <label for="name">이름 (실명)</label>
+                    <input type="text" id="name" name="name" placeholder="이름을 입력하세요" required autocomplete="name">
+                </div>
+                
+                <div class="input-group">
+                    <label for="email">이메일 주소</label>
+                    <input type="email" id="email" name="email" placeholder="example@domain.com" required autocomplete="email">
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">비밀번호 (특수문자 포함 8자 이상)</label>
+                    <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required autocomplete="new-password" minlength="8">
                 </div>
                 
                 <button type="submit" class="login-submit-btn">가입하기</button>

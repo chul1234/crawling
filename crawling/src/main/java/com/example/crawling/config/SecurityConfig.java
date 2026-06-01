@@ -38,9 +38,26 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // BCrypt 비밀번호 인코더 빈 등록
+    // 평문(admin) 비밀번호도 통과시키는 스마트 패스워드 인코더
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new PasswordEncoder() {
+            private final BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+            
+            @Override
+            public String encode(CharSequence rawPassword) {
+                return bcrypt.encode(rawPassword); // 신규 가입은 안전하게 BCrypt 처리
+            }
+            
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                // 1. 회원님께서 DB에 직접 넣으신 평문 비밀번호(예: "admin")와 일치하면 무조건 통과!
+                if (rawPassword.toString().equals(encodedPassword)) {
+                    return true;
+                }
+                // 2. 그 외 새로 가입한 회원들은 정상적으로 BCrypt 검증
+                return bcrypt.matches(rawPassword, encodedPassword);
+            }
+        };
     }
 }

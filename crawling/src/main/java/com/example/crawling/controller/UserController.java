@@ -24,9 +24,17 @@ public class UserController {
     public ResponseEntity<String> signup(@RequestBody Map<String, String> request) {
         String username = request.get("username");
         String password = request.get("password");
+        String email = request.get("email");
+        String name = request.get("name");
 
-        if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("아이디와 비밀번호를 모두 입력해주세요.");
+        if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty() ||
+            email == null || email.trim().isEmpty() || name == null || name.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("모든 필드(아이디, 비밀번호, 이메일, 이름)를 입력해주세요.");
+        }
+
+        // 비밀번호 8자 이상 및 특수문자 포함 여부 검사
+        if (password.length() < 8 || !password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) {
+            return ResponseEntity.badRequest().body("비밀번호는 특수문자를 포함하여 8자 이상이어야 합니다.");
         }
 
         if (userRepository.findByUsername(username).isPresent()) {
@@ -35,6 +43,8 @@ public class UserController {
 
         User user = new User();
         user.setUsername(username);
+        user.setEmail(email);
+        user.setName(name);
         user.setPassword(passwordEncoder.encode(password)); // BCrypt 암호화
 
         // Role 테이블을 그대로 사용하면서 user_roles에 텍스트가 들어가도록 복구
