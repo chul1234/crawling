@@ -21,6 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
         updateToggleButtonText(newTheme);
     });
 
+    // 로그아웃 버튼 클릭 이벤트
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        if(confirm('로그아웃 하시겠습니까?')) {
+            // 스프링 시큐리티의 기본 /api/logout 은 POST를 권장함 (CSRF가 비활성화되어 있으므로 GET도 가능하지만 POST로 명시)
+            fetch('/api/logout', { method: 'POST' })
+                .then(() => {
+                    window.location.href = '/login.html';
+                });
+        }
+    });
+
     // 버튼 텍스트 업데이트 함수
     function updateToggleButtonText(theme) {
         if (theme === 'dark') {

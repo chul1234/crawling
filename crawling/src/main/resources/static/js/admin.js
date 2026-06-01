@@ -15,6 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
         updateToggleButtonText(newTheme);
     });
 
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        if(confirm('로그아웃 하시겠습니까?')) {
+            fetch('/api/logout', { method: 'POST' })
+                .then(() => {
+                    window.location.href = '/login.html';
+                });
+        }
+    });
+
     function updateToggleButtonText(theme) {
         if (theme === 'dark') {
             themeToggleBtn.innerHTML = '☀️ 라이트 모드';
