@@ -19,6 +19,11 @@
                     <button id="logout-btn" class="theme-btn" style="background: rgba(255, 71, 87, 0.2); color: #ff4757;">로그아웃</button>
                 </div>
             </div>
+            <!-- 검색창 영역 -->
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="원하는 핫딜 상품을 검색해보세요 (예: 아이패드)" autocomplete="off">
+                <button id="search-btn">🔍 검색</button>
+            </div>
             <nav id="category-filter">
                 <button id="admin-tab" style="display:none;" onclick="location.href='/admin.html'">⚙️ 관리자</button>
                 <button id="mypage-tab" onclick="location.href='/mypage.html'" style="display:none;">👤 마이페이지</button>
@@ -157,6 +162,30 @@
             <button class="page-btn">다음 〉</button>
         </div>
     </main>
+
+    <!-- 하단 푸터 영역 -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>🛍️ 알짜배기 핫딜 모음</h4>
+                <p>가장 빠르고 정확한 쇼핑 특가 정보를 AI가 엄선하여 제공합니다.</p>
+            </div>
+            <div class="footer-section">
+                <h4>고객지원</h4>
+                <p><a href="#">공지사항</a></p>
+                <p><a href="#">이용약관</a></p>
+                <p><a href="#">개인정보처리방침</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>문의하기</h4>
+                <p>이메일: support@alzza-hotdeal.com</p>
+                <p>운영시간: 평일 10:00 - 18:00</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 알짜배기 핫딜. All rights reserved.
+        </div>
+    </footer>
 
     <script src="/js/toast.js"></script>
     <script src="/js/index.js"></script>
