@@ -31,9 +31,31 @@
     </header>
 
     <main>
-        <section class="intro-section">
-            <p class="subtitle">AI가 분석한 오늘의 로켓배송 특가 상품을 한눈에 확인하세요.</p>
-        </section>
+        <div class="hero-carousel">
+            <div class="carousel-slide slide-1 active">
+                <div class="slide-content">
+                    <h2>🔥 오늘의 초특가</h2>
+                    <p>AI가 엄선한 24시간 한정 마감 임박 상품</p>
+                </div>
+            </div>
+            <div class="carousel-slide slide-2">
+                <div class="slide-content">
+                    <h2>💻 디지털 가전 세일</h2>
+                    <p>노트북부터 스마트워치까지 최대 70% 할인</p>
+                </div>
+            </div>
+            <div class="carousel-slide slide-3">
+                <div class="slide-content">
+                    <h2>🍎 신선식품 새벽배송</h2>
+                    <p>자기 전에 주문하고 눈 뜨면 도착하는 신선함</p>
+                </div>
+            </div>
+            <div class="carousel-indicators">
+                <div class="indicator active" data-slide="0"></div>
+                <div class="indicator" data-slide="1"></div>
+                <div class="indicator" data-slide="2"></div>
+            </div>
+        </div>
 
         <!-- 상품 카드 그리드 -->
         <div id="product-grid" class="product-grid">
@@ -136,6 +158,41 @@
         </div>
     </main>
 
+    <script src="/js/toast.js"></script>
     <script src="/js/index.js"></script>
+    
+    <script>
+        // 캐러셀 슬라이드 자동 재생 로직
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const indicators = document.querySelectorAll('.indicator');
+            let currentSlide = 0;
+            
+            function showSlide(index) {
+                slides.forEach(s => s.classList.remove('active'));
+                indicators.forEach(i => i.classList.remove('active'));
+                
+                slides[index].classList.add('active');
+                indicators[index].classList.add('active');
+            }
+            
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+            
+            let slideInterval = setInterval(nextSlide, 4000);
+            
+            // 인디케이터 클릭 시 해당 슬라이드로 이동
+            indicators.forEach(indicator => {
+                indicator.addEventListener('click', (e) => {
+                    clearInterval(slideInterval); // 수동 조작 시 자동 재생 일시 정지
+                    currentSlide = parseInt(e.target.dataset.slide);
+                    showSlide(currentSlide);
+                    slideInterval = setInterval(nextSlide, 4000); // 다시 재생
+                });
+            });
+        });
+    </script>
 </body>
 </html>
