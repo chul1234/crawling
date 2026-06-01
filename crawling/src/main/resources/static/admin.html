@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지 - 사용자 목록</title>
+    <!-- 프리미엄 폰트: Pretendard -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="/css/index.css">
+    <style>
+        .admin-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        
+        [data-theme='light'] .admin-container {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--text-primary);
+        }
+
+        .user-table th, .user-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme='light'] .user-table th, [data-theme='light'] .user-table td {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .user-table th {
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme='light'] .user-table th {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .badge-admin {
+            background: #ff4757;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-user {
+            background: #2ed573;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .back-btn {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <header class="glass-header">
+        <div class="header-content">
+            <div class="header-top">
+                <h1>⚙️ 관리자 대시보드</h1>
+                <button id="theme-toggle" class="theme-btn">🌙 다크 모드</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="admin-container">
+            <div class="admin-header">
+                <h2>회원 목록 (ID 관리)</h2>
+                <button class="back-btn" onclick="location.href='/index.html'">돌아가기</button>
+            </div>
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>ID (고유번호)</th>
+                        <th>아이디</th>
+                        <th>이름</th>
+                        <th>이메일</th>
+                        <th>권한</th>
+                        <th>가입일</th>
+                    </tr>
+                </thead>
+                <tbody id="user-list">
+                    <tr><td colspan="6" style="text-align: center;">로딩 중...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

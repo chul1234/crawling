@@ -19,7 +19,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // CSS, JS, 이미지 등 정적 리소스와 로그인/회원가입 페이지는 누구나 접근 가능
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/login.html", "/api/login", "/signup.html", "/api/signup").permitAll()
-                // 그 외 모든 요청은 로그인(인증) 필요 (index.html 포함)
+                // 관리자 페이지는 ADMIN 권한만 접근 가능
+                .requestMatchers("/admin.html", "/api/admin/**").hasRole("ADMIN")
+                // 그 외 모든 요청은 로그인(인증) 필요 (index.html, /api/users/me 등 포함)
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

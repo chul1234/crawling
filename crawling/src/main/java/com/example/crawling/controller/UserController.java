@@ -59,4 +59,18 @@ public class UserController {
 
         return ResponseEntity.ok("회원가입 성공");
     }
+
+    @GetMapping("/users/me")
+    public ResponseEntity<?> getCurrentUser(org.springframework.security.core.Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("로그인되지 않았습니다.");
+        }
+        
+        String username = authentication.getName();
+        java.util.List<String> roles = authentication.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .collect(java.util.stream.Collectors.toList());
+                
+        return ResponseEntity.ok(Map.of("username", username, "roles", roles));
+    }
 }

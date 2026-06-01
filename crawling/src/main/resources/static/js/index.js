@@ -30,6 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 현재 사용자 권한 확인 후 관리자 탭 노출
+    fetch('/api/users/me')
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.roles && data.roles.includes('ROLE_ADMIN')) {
+                document.getElementById('admin-tab').style.display = 'inline-block';
+            }
+        })
+        .catch(err => console.log('사용자 정보 로드 실패 (아마 비로그인 상태이거나 오류)', err));
+
     // API 호출 및 데이터 렌더링 관련 상태 변수
     let currentCategory = 'all';
     let currentPage = 0;
