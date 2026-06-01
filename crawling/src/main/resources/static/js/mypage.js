@@ -121,22 +121,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 grid.innerHTML = products.map(product => {
-                    const discountRatio = Math.round(((product.originalPrice - product.discountPrice) / product.originalPrice) * 100);
+                    const discountRatio = product.discountRate || 0;
                     return `
                         <article class="product-card" style="margin-bottom:0;">
                             <div class="image-wrapper" style="height:150px;">
-                                <img src="${product.imageUrl || 'https://via.placeholder.com/600x400?text=No+Image'}" alt="${product.title}">
-                                ${product.isRocket ? '<span class="badge badge-rocket">🚀 로켓배송</span>' : ''}
+                                <img src="${product.imageUrl || 'https://via.placeholder.com/600x400?text=No+Image'}" alt="${product.name}">
                             </div>
                             <div class="product-info" style="padding:15px;">
-                                <span class="category-text">${product.category}</span>
-                                <h3 class="product-name" style="font-size:1rem;">${product.title}</h3>
+                                <span class="category-text">${product.category || '기타'}</span>
+                                <h3 class="product-name" style="font-size:1rem;">${product.name}</h3>
                                 <div class="price-container">
                                     <div class="price-row">
                                         <span class="discount-rate">${discountRatio}%</span>
-                                        <span class="current-price">${product.discountPrice.toLocaleString()}<span class="unit">원</span></span>
+                                        <span class="current-price">${product.price ? product.price.toLocaleString() : 0}<span class="unit">원</span></span>
                                     </div>
-                                    <span class="original-price">${product.originalPrice.toLocaleString()}원</span>
+                                    ${product.originalPrice ? `<span class="original-price">${product.originalPrice.toLocaleString()}원</span>` : ''}
                                 </div>
                                 <button class="login-submit-btn" style="margin-top:10px; padding:8px; font-size:0.9rem;" onclick="removeBookmark(${product.id})">❌ 찜 해제</button>
                             </div>
