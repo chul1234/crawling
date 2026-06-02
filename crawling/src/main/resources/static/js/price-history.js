@@ -1,4 +1,103 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log("가격 변동 추이 페이지 로드 완료");
-    // TODO: 특정 상품의 가격 변동 내역(price_history) API 호출 및 차트 렌더링
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    
+    if (!productId) {
+        if (typeof showToast === 'function') {
+            showToast("잘못된 접근입니다. 상품 정보가 없습니다.", "error");
+        } else {
+            alert("잘못된 접근입니다. 상품 정보가 없습니다.");
+        }
+        setTimeout(() => { window.location.href = '/index.html'; }, 1500);
+        return;
+    }
+
+    try {
+        // 1. 상품 정보 로드
+        const productRes = await fetch(`/api/products/${productId}`);
+        if (!productRes.ok) throw new Error("상품 정보를 불러오지 못했습니다.");
+        const product = await productRes.json();
+        
+        renderProductSummary(product);
+        
+        // 2. 가격 변동 내역 로드
+        const historyRes = await fetch(`/api/price-history/${productId}`);
+        if (!historyRes.ok) throw new Error("가격 변동 내역을 불러오지 못했습니다.");
+        const historyList = await historyRes.json();
+        
+        renderPriceHistory(historyList);
+        
+    } catch (error) {
+        console.error(error);
+        if (typeof showToast === 'function') {
+            showToast(error.message, "error");
+        } else {
+            alert(error.message);
+        }
+    }
 });
+
+function renderProductSummary(product) {
+    const summaryContainer = document.getElementById('productSummary');
+    const priceStr = product.price ? product.price.toLocaleString() + '원' : '가격 정보 없음';
+    
+    summaryContainer.innerHTML = `
+        <img src="${product.imageUrl}" alt="${product.name}">
+        <div class="summary-info">
+            <h2>${product.name}</h2>
+            <div class="current-price">현재가: ${priceStr}</div>
+        </div>
+    `;
+}
+
+function renderPriceHistory(historyList) {
+    const listContainer = document.getElementById('priceList');
+    
+    if (!historyList || historyList.length === 0) {
+        listContainer.innerHTML = '<li style="justify-content: center; color: #888;">수집된 가격 변동 내역이 없습니다.</li>';
+        return;
+    }
+    
+    listContainer.innerHTML = '';
+    
+    // 리스트는 최신순(내림차순)으로 API에서 전달됨
+    for (let i = 0; i < historyList.length; i++) {
+        const history = historyList[i];
+        
+        // 날짜 포맷 (예: 10월 25일 14:00)
+        const dateObj = new Date(history.createdAt);
+        const dateStr = `${dateObj.getMonth() + 1}월 ${dateObj.getDate()}일 ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+        
+        let trendHtml = '';
+        const priceFormatted = history.price.toLocaleString() + '원';
+        
+        if (i === historyList.length - 1) {
+            // 가장 처음 수집된 데이터 (맨 마지막 인덱스)
+            trendHtml = `<span class="trend same">- 최초수집</span>`;
+        } else {
+            // 과거(이전 인덱스 i+1)와 비교
+            const previousHistory = historyList[i + 1];
+            const diff = history.price - previousHistory.price;
+            
+            if (diff > 0) {
+                trendHtml = `<span class="trend up">▲ ${diff.toLocaleString()}원</span>`;
+            } else if (diff < 0) {
+                trendHtml = `<span class="trend down">▼ ${Math.abs(diff).toLocaleString()}원</span>`;
+            } else {
+                trendHtml = `<span class="trend same">- 변동없음</span>`;
+            }
+        }
+        
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <span class="date">${dateStr}</span>
+            <div class="price-box">
+                <span class="price-value">${priceFormatted}</span>
+                ${trendHtml}
+            </div>
+        `;
+        listContainer.appendChild(li);
+    }
+}

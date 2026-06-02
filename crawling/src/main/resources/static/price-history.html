@@ -25,55 +25,21 @@
 
     <main class="history-main">
         <!-- 1. 대상 상품 요약 -->
-        <section class="product-summary">
-            <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=300&auto=format&fit=crop" alt="상품 이미지">
-            <div class="summary-info">
-                <h2>프리미엄 천연 펄프 3겹 롤화장지 30롤</h2>
-                <div class="current-price">현재가: 15,900원</div>
-            </div>
+        <section class="product-summary" id="productSummary">
+            <div style="text-align: center; padding: 20px;">로딩 중...</div>
         </section>
 
         <!-- 2. 가격 변동 리스트 카드 -->
         <section class="history-card">
             <h3>최근 수집된 가격 추이</h3>
-            <ul class="price-list">
-                
-                <li>
-                    <span class="date">오늘 (10월 25일 14:00)</span>
-                    <div class="price-box">
-                        <span class="price-value">15,900원</span>
-                        <span class="trend down">▼ 1,000원</span>
-                    </div>
-                </li>
-
-                <li>
-                    <span class="date">10월 23일 09:00</span>
-                    <div class="price-box">
-                        <span class="price-value">16,900원</span>
-                        <span class="trend same">- 변동없음</span>
-                    </div>
-                </li>
-
-                <li>
-                    <span class="date">10월 20일 15:30</span>
-                    <div class="price-box">
-                        <span class="price-value">16,900원</span>
-                        <span class="trend up">▲ 2,000원</span>
-                    </div>
-                </li>
-
-                <li>
-                    <span class="date">10월 15일 10:00</span>
-                    <div class="price-box">
-                        <span class="price-value">14,900원</span>
-                        <span class="trend same">- 최초수집</span>
-                    </div>
-                </li>
-
+            <ul class="price-list" id="priceList">
+                <div style="text-align: center; padding: 20px;">로딩 중...</div>
             </ul>
         </section>
     </main>
 
+    <!-- 공통 Toast 알림 스크립트 -->
+    <script src="/js/toast.js"></script>
     <script src="/js/price-history.js"></script>
 </body>
 </html>
