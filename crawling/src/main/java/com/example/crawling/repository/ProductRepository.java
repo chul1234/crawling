@@ -10,8 +10,14 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     
-    // 카테고리별 페이징 검색 (카테고리가 'all'일 경우 findAll 사용)
+    // 카테고리로 페이징 검색
     Page<Product> findByCategory(String category, Pageable pageable);
+
+    // 검색어(이름)로 페이징 검색
+    Page<Product> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
+    
+    // 카테고리 + 검색어로 페이징 검색
+    Page<Product> findByCategoryAndNameContainingIgnoreCase(String category, String keyword, Pageable pageable);
 
     // 크롤링 시 상품 중복 확인을 위한 메서드
     java.util.Optional<Product> findByProductUrl(String productUrl);

@@ -23,14 +23,23 @@ public class ProductController {
     @GetMapping
     public Page<Product> getProducts(
             @RequestParam(defaultValue = "all") String category,
+            @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
         
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
 
+        boolean hasKeyword = (keyword != null && !keyword.trim().isEmpty());
+
         if ("all".equalsIgnoreCase(category)) {
+            if (hasKeyword) {
+                return productRepository.findByNameContainingIgnoreCase(keyword.trim(), pageRequest);
+            }
             return productRepository.findAll(pageRequest);
         } else {
+            if (hasKeyword) {
+                return productRepository.findByCategoryAndNameContainingIgnoreCase(category, keyword.trim(), pageRequest);
+            }
             return productRepository.findByCategory(category, pageRequest);
         }
     }

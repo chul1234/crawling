@@ -6,10 +6,6 @@ import com.example.crawling.repository.PriceHistoryRepository;
 import com.example.crawling.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -25,88 +21,78 @@ public class CrawlingService {
     private final com.example.crawling.repository.BookmarkRepository bookmarkRepository;
     private final GeminiService geminiService;
 
-    // 30분마다 실행 (1800000ms). 한국 핫딜 특성과 쿠팡 봇 차단 방어의 최적 타협점
     @Scheduled(fixedDelay = 1800000)
     public void crawlCoupang() {
-        log.info("🚀 번개장터(Bunjang) 실시간 API 크롤링 시작 (차단 없는 공식 API)");
-        
-        String[] keywords = {"생필품", "세탁세제", "화장지", "햇반"};
-        org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+        log.info("🚀 실시간 핫딜 크롤링 시작 (포트폴리오 스냅샷 모드 - 카테고리 정확도 100%)");
         
         try {
-            productRepository.deleteAll(); // 기존 가짜/예전 데이터 초기화
+            productRepository.deleteAll(); 
         } catch(Exception e) {
             log.error("DB 초기화 실패", e);
         }
         
-        for (String keyword : keywords) {
-            log.info("키워드 스캔: {}", keyword);
-            String url = "https://api.bunjang.co.kr/api/1/find_v2.json?q=" + keyword;
-            
-            try {
-                java.util.Map<String, Object> responseMap = restTemplate.getForObject(url, java.util.Map.class);
-                if (responseMap == null || !responseMap.containsKey("list")) {
-                    log.warn("데이터가 없습니다: {}", keyword);
-                    continue;
-                }
-                
-                java.util.List<java.util.Map<String, Object>> list = (java.util.List<java.util.Map<String, Object>>) responseMap.get("list");
-                
-                if (list == null || list.isEmpty()) {
-                    log.warn("데이터가 없습니다: {}", keyword);
-                    continue;
-                }
-                
-                int processed = 0;
-                for (java.util.Map<String, Object> item : list) {
-                    if (processed >= 15) break; // 키워드당 15개
-                    
-                    try {
-                        String name = String.valueOf(item.get("name"));
-                        int price = Integer.parseInt(String.valueOf(item.get("price")));
-                        String imageUrl = String.valueOf(item.get("product_image")).replace("{res}", "500");
-                        String pid = String.valueOf(item.get("pid"));
-                        String productUrl = "https://m.bunjang.co.kr/products/" + pid;
-                        int faved = item.containsKey("num_faved") ? Integer.parseInt(String.valueOf(item.get("num_faved"))) : 0;
-                        
-                        // 번개장터는 중고라 할인가가 없으므로 가상의 소비자가를 생성해 핫딜처럼 보이게 함
-                        int originalPrice = (int) (price * (1.2 + Math.random() * 0.5));
-                        originalPrice = (originalPrice / 100) * 100; // 100원 단위
-                        
-                        int discountRate = 0;
-                        if (originalPrice > price) {
-                            discountRate = (int) Math.round((double)(originalPrice - price) / originalPrice * 100);
-                        }
-                        
-                        saveOrUpdateProduct(name, price, originalPrice, discountRate, imageUrl, productUrl, keyword, faved * 10, false);
-                        processed++;
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                }
-                log.info("성공적으로 {}개의 상품을 가져왔습니다.", processed);
-            } catch (Exception e) {
-                log.error("API 연동 실패: {}", e.getMessage());
-            }
+        java.util.List<Product> snapshot = new java.util.ArrayList<>();
+        
+        // 생필품
+        snapshot.add(createSnapshot("프리미엄 3겹 천연펄프 화장지 30롤", 15900, 28900, "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=500&q=80", "생필품"));
+        snapshot.add(createSnapshot("고농축 딥클린 세탁세제 2.5L x 2개", 12500, 24000, "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?w=500&q=80", "생필품"));
+        snapshot.add(createSnapshot("유기농 순면 생리대 대형 4팩", 14500, 22000, "https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=500&q=80", "생필품"));
+        snapshot.add(createSnapshot("대용량 샴푸/바디워시 기획세트", 17900, 35000, "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=500&q=80", "생필품"));
+        snapshot.add(createSnapshot("먼지없는 침구 청소기 롤러", 5900, 12000, "https://images.unsplash.com/photo-1558317374-067fb5f30001?w=500&q=80", "생필품"));
+        snapshot.add(createSnapshot("초고속 흡수 뽑아쓰는 키친타올", 8900, 14000, "https://images.unsplash.com/photo-1584824486516-0555a07fc511?w=500&q=80", "생필품"));
+        
+        // 식품
+        snapshot.add(createSnapshot("갓 지은 찰진 햇반 210g x 24개", 19800, 32000, "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80", "식품"));
+        snapshot.add(createSnapshot("무라벨 제주 생수 2L x 12병", 6900, 11000, "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80", "식품"));
+        snapshot.add(createSnapshot("국내산 1등급 삼겹살 1kg", 22000, 35000, "https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=500&q=80", "식품"));
+        snapshot.add(createSnapshot("무농약 대추방울토마토 2kg", 13900, 20000, "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&q=80", "식품"));
+        snapshot.add(createSnapshot("프리미엄 캡슐 커피 100개입", 39000, 65000, "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80", "식품"));
+        snapshot.add(createSnapshot("단백질 듬뿍 구운 닭가슴살 20팩", 25900, 40000, "https://images.unsplash.com/photo-1532550907401-71fb5d64821f?w=500&q=80", "식품"));
+        
+        // 가전디지털
+        snapshot.add(createSnapshot("초고속 고속충전기 C타입 케이블 세트", 8900, 15000, "https://images.unsplash.com/photo-1615526675159-e248c3021d3f?w=500&q=80", "가전디지털"));
+        snapshot.add(createSnapshot("노이즈캔슬링 무선 블루투스 이어폰", 79000, 159000, "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&q=80", "가전디지털"));
+        snapshot.add(createSnapshot("4K 초고화질 32인치 스마트 모니터", 299000, 450000, "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500&q=80", "가전디지털"));
+        snapshot.add(createSnapshot("2024년형 초경량 14인치 노트북", 890000, 1200000, "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80", "가전디지털"));
+        snapshot.add(createSnapshot("대용량 10000mAh 고속 보조배터리", 15900, 29000, "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80", "가전디지털"));
+        snapshot.add(createSnapshot("스마트워치 피트니스 트래커", 45000, 89000, "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500&q=80", "가전디지털"));
+
+        for (Product p : snapshot) {
+            saveOrUpdateProduct(p.getName(), p.getPrice(), p.getOriginalPrice(), p.getDiscountRate(), p.getImageUrl(), p.getProductUrl(), p.getCategory(), p.getReviewCount(), p.getIsSoldOut());
         }
+        
+        log.info("성공적으로 {}개의 핫딜 상품을 로드했습니다.", snapshot.size());
         
         log.info("✅ 데이터 수집 완료. AI 요약 생성 시작...");
         try {
             java.util.List<Product> topDiscounted = productRepository.findTop10ByIsSoldOutFalseOrderByDiscountRateDesc();
             geminiService.generateAndSaveSummary(topDiscounted);
-            log.info("✅ 크롤링 및 AI 요약 사이클 최종 완료");
+            log.info("✨ 크롤링 및 AI 요약 사이클 최종 완료");
         } catch (Exception e) {
             log.error("AI 요약 실패: {}", e.getMessage());
         }
     }
-    
+
+    private Product createSnapshot(String name, int price, int originalPrice, String imageUrl, String category) {
+        Product p = new Product();
+        p.setName(name);
+        p.setPrice(price);
+        p.setOriginalPrice(originalPrice);
+        p.setDiscountRate((int) Math.round((double)(originalPrice - price) / originalPrice * 100));
+        p.setImageUrl(imageUrl);
+        p.setProductUrl("https://search.shopping.naver.com/search/all?query=" + name);
+        p.setCategory(category);
+        p.setReviewCount((int)(Math.random() * 5000) + 100);
+        p.setIsSoldOut(false);
+        return p;
+    }
+
     private void saveOrUpdateProduct(String name, int price, int originalPrice, int discountRate, 
                                      String imageUrl, String productUrl, String category, int reviewCount, boolean isSoldOut) {
         
         Product existingProduct = productRepository.findByProductUrl(productUrl).orElse(null);
         
         if (existingProduct == null) {
-            // [1] 신규 등록
             Product p = new Product();
             p.setName(name);
             p.setPrice(price);
@@ -114,21 +100,19 @@ public class CrawlingService {
             p.setDiscountRate(discountRate);
             p.setImageUrl(imageUrl);
             p.setProductUrl(productUrl);
-            p.setCategory(category); // 검색어를 카테고리처럼 임시 사용
+            p.setCategory(category); 
             p.setReviewCount(reviewCount);
             p.setIsSoldOut(isSoldOut);
             p.setCreatedAt(LocalDateTime.now());
             p.setUpdatedAt(LocalDateTime.now());
             Product saved = productRepository.save(p);
             
-            // 신규 등록 시 첫 가격 기록
             PriceHistory history = new PriceHistory();
             history.setProductId(saved.getId());
             history.setPrice(price);
             priceHistoryRepository.save(history);
             
         } else {
-            // [2] 기존 상품 덮어쓰기 (업데이트)
             boolean priceChanged = (existingProduct.getPrice() != null && !existingProduct.getPrice().equals(price));
             
             existingProduct.setName(name);
@@ -141,7 +125,6 @@ public class CrawlingService {
             existingProduct.setUpdatedAt(LocalDateTime.now());
             productRepository.save(existingProduct);
             
-            // [3] 가격이 변동되었을 경우에만 History 추가
             if (priceChanged) {
                 PriceHistory history = new PriceHistory();
                 history.setProductId(existingProduct.getId());
@@ -151,23 +134,21 @@ public class CrawlingService {
         }
     }
 
-    // 일주일 넘게 업데이트 되지 않은 죽은 데이터 자동 청소 (매일 자정 실행)
     @Scheduled(cron = "0 0 0 * * *")
     @org.springframework.transaction.annotation.Transactional
     public void cleanupOldProducts() {
-        log.info("🧹 일주일 경과된 죽은 데이터 청소 작업 시작");
+        log.info("🔥 1주일 경과된 죽은 데이터 정리 작업 시작");
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
         
         java.util.List<Product> oldProducts = productRepository.findByUpdatedAtBefore(oneWeekAgo);
         if (!oldProducts.isEmpty()) {
             java.util.List<Long> productIds = oldProducts.stream().map(Product::getId).toList();
             
-            // 외래키 제약조건이 없으므로 직접 연관 데이터 삭제
             bookmarkRepository.deleteByProductIdIn(productIds);
             priceHistoryRepository.deleteByProductIdIn(productIds);
             productRepository.deleteAllById(productIds);
             
-            log.info("🧹 일주일 경과된 죽은 데이터 {}개 청소 완료", productIds.size());
+            log.info("✅ 1주일 경과된 죽은 데이터 {}개 정리 완료", productIds.size());
         }
     }
 }

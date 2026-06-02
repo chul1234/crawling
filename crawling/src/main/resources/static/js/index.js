@@ -59,17 +59,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // API 호출 및 데이터 렌더링 관련 상태 변수
     let currentCategory = 'all';
     let currentPage = 0;
+    let currentKeyword = '';
     window.myBookmarkedProductIds = new Set();
     const pageSize = 12;
 
     const productGrid = document.getElementById('product-grid');
     const paginationDiv = document.getElementById('pagination');
     const categoryButtons = document.querySelectorAll('#category-filter button');
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+
+    // 검색 이벤트
+    searchBtn.addEventListener('click', () => {
+        currentKeyword = searchInput.value.trim();
+        currentPage = 0;
+        fetchProducts();
+    });
+
+    searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            searchBtn.click();
+        }
+    });
 
     // 상품 데이터 불러오기 함수
     async function fetchProducts() {
         try {
-            const response = await fetch(`/api/products?category=${encodeURIComponent(currentCategory)}&page=${currentPage}&size=${pageSize}`);
+            let url = `/api/products?category=${encodeURIComponent(currentCategory)}&page=${currentPage}&size=${pageSize}`;
+            if (currentKeyword) {
+                url += `&keyword=${encodeURIComponent(currentKeyword)}`;
+            }
+            const response = await fetch(url);
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
                     window.location.href = '/login.html'; // 로그인 안 되어 있으면 이동
@@ -169,7 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.classList.add('active');
             
             currentCategory = e.target.getAttribute('data-category');
-            currentPage = 0; // 카테고리 변경 시 1페이지로 초기화
+            currentPage = 0;
+            currentKeyword = ''; // 카테고리 이동 시 검색어 초기화
+            searchInput.value = '';
             fetchProducts();
         });
     });
