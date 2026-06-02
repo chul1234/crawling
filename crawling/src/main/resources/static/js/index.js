@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // API 호출 및 데이터 렌더링 관련 상태 변수
     let currentCategory = 'all';
     let currentPage = 0;
+    window.myBookmarkedProductIds = new Set();
     const pageSize = 12;
 
     const productGrid = document.getElementById('product-grid');
@@ -115,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${p.imageUrl || 'https://via.placeholder.com/600x600?text=No+Image'}" alt="${p.name}">
                     ${badge}
                     ${overlay}
-                    <button class="bookmark-btn" onclick="toggleBookmark(${p.id}, this)" style="position: absolute; bottom: 10px; right: 10px; background: rgba(255,255,255,0.8); border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">🤍</button>
+                    <button class="bookmark-btn" onclick="toggleBookmark(${p.id}, this)" style="position: absolute; bottom: 10px; right: 10px; background: rgba(255,255,255,0.8); border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">${window.myBookmarkedProductIds && window.myBookmarkedProductIds.has(p.id) ? '❤️' : '🤍'}</button>
                 </div>
                 <div class="product-info">
                     <span class="category-text">${p.category || '기타'}</span>
@@ -127,8 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         ${p.originalPrice ? `<span class="original-price">${p.originalPrice.toLocaleString()}원</span>` : ''}
                     </div>
-                    <div class="card-footer">
+                    <div class="card-footer" style="display:flex; justify-content:space-between; align-items:center;">
                         <span class="review-count">⭐ 리뷰 ${p.reviewCount ? p.reviewCount.toLocaleString() : 0}</span>
+                        <a href="/price-history.html?id=${p.id}" class="history-link-btn" style="font-size:0.9rem; color:#007bff; text-decoration:none; font-weight:600;">📈 가격추이</a>
                     </div>
                 </div>
             </article>
@@ -172,8 +174,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 초기 데이터 로드
-    fetchProducts();
+    // 초기 데이터 로드 전 찜 목록 선행 로드
+    async function initData() {
+        try {
+            const userRes = await fetch('/api/users/me');
+            if (userRes.ok) {
+                const userData = await userRes.json();
+                if (userData && userData.username) {
+                    const bmRes = await fetch('/api/bookmarks/my');
+                    if (bmRes.ok) {
+                        const bmData = await bmRes.json();
+                        if (Array.isArray(bmData)) {
+                            bmData.forEach(p => window.myBookmarkedProductIds.add(p.id));
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.log('찜 목록 로드 실패', e);
+        }
+        fetchProducts();
+    }
+    initData();
 });
 
 // 찜하기(하트) 토글 글로벌 함수
@@ -190,9 +212,11 @@ window.toggleBookmark = function(productId, btnElement) {
         .then(data => {
             if (data.status === 'added') {
                 btnElement.innerHTML = '❤️';
+                if (window.myBookmarkedProductIds) window.myBookmarkedProductIds.add(productId);
                 alert('찜 목록에 추가되었습니다!');
             } else if (data.status === 'removed') {
                 btnElement.innerHTML = '🤍';
+                if (window.myBookmarkedProductIds) window.myBookmarkedProductIds.delete(productId);
             }
         })
         .catch(console.error);
