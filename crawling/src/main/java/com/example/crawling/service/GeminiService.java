@@ -27,7 +27,7 @@ public class GeminiService {
     @Value("${gemini.api.key}")
     private String apiKey;
 
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=";
 
     public void generateAndSaveSummary(List<Product> topProducts) {
         if (topProducts == null || topProducts.isEmpty()) {
@@ -40,7 +40,7 @@ public class GeminiService {
                 .map(p -> String.format("- %s (할인율: %d%%, 할인가: %d원)", p.getName(), p.getDiscountRate(), p.getPrice()))
                 .collect(Collectors.joining("\n"));
 
-        String prompt = "다음은 오늘 수집된 쿠팡의 최고 할인율 상품 목록입니다.\n\n"
+        String prompt = "다음은 오늘 수집된 실시간 특가/중고 핫딜 상품 목록입니다.\n\n"
                 + productInfo + "\n\n"
                 + "위 상품들을 보고 사용자들의 구매 욕구를 자극할 수 있는 매력적인 브리핑을 3~4줄로 요약해 줘. 친근한 말투를 사용하고, HTML 태그(<strong>, <br> 등)를 적절히 사용해서 꾸며줘.";
 
