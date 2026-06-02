@@ -15,4 +15,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // 크롤링 시 상품 중복 확인을 위한 메서드
     java.util.Optional<Product> findByProductUrl(String productUrl);
+
+    // 할인율 1위 상품 조회 (품절 제외)
+    java.util.Optional<Product> findFirstByIsSoldOutFalseOrderByDiscountRateDesc();
+
+    // AI 요약용 상위 10개 상품 추출 (품절 제외)
+    java.util.List<Product> findTop10ByIsSoldOutFalseOrderByDiscountRateDesc();
+
+    // 1주일 경과 상품 청소를 위한 쿼리
+    java.util.List<Product> findByUpdatedAtBefore(java.time.LocalDateTime dateTime);
 }

@@ -16,4 +16,8 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     // 외래키(FK)가 없으므로 유저나 상품 삭제 시 수동 정리를 위한 메서드
     void deleteByUsername(String username);
     void deleteByProductId(Long productId);
+    
+    @org.springframework.transaction.annotation.Transactional
+    @org.springframework.data.jpa.repository.Modifying
+    void deleteByProductIdIn(List<Long> productIds);
 }

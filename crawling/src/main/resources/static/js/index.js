@@ -174,8 +174,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // 다이내믹 히어로 배너 데이터 로드 (할인율 1위 상품)
+    async function loadTopDiscountBanner() {
+        try {
+            const res = await fetch('/api/products/top-discount');
+            if (res.ok && res.status === 200) {
+                const product = await res.json();
+                if (product && product.id) {
+                    const slide1 = document.querySelector('.slide-1 .slide-content');
+                    if (slide1) {
+                        slide1.innerHTML = `
+                            <h2>🔥 오늘의 초특가: ${product.discountRate}% 할인</h2>
+                            <p>${product.name}</p>
+                            <a href="${product.productUrl}" target="_blank" style="display:inline-block; margin-top:10px; padding:8px 15px; background:white; color:#ff4757; text-decoration:none; border-radius:20px; font-weight:bold;">바로가기</a>
+                        `;
+                        // 배경 이미지도 상품 이미지로 변경 (선택사항, CSS에 맞춰 어둡게 처리 필요할 수 있음)
+                        document.querySelector('.slide-1').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${product.imageUrl}')`;
+                        document.querySelector('.slide-1').style.backgroundSize = 'cover';
+                        document.querySelector('.slide-1').style.backgroundPosition = 'center';
+                    }
+                }
+            }
+        } catch (e) {
+            console.log('초특가 배너 로드 실패', e);
+        }
+    }
+
+    // AI 요약 브리핑 로드
+    async function loadAiSummary() {
+        try {
+            const res = await fetch('/api/ai/summary');
+            if (res.ok && res.status === 200) {
+                const data = await res.json();
+                if (data && data.content) {
+                    const box = document.getElementById('ai-summary-box');
+                    const contentDiv = document.getElementById('ai-summary-content');
+                    if (box && contentDiv) {
+                        // AI가 작성한 HTML(혹은 마크다운)을 innerHTML로 삽입
+                        contentDiv.innerHTML = data.content.replace(/\n/g, '<br>');
+                        box.style.display = 'block';
+                    }
+                }
+            }
+        } catch (e) {
+            console.log('AI 요약 로드 실패', e);
+        }
+    }
+
     // 초기 데이터 로드 전 찜 목록 선행 로드
     async function initData() {
+        loadTopDiscountBanner(); // 배너 비동기 로드
+        loadAiSummary(); // AI 브리핑 비동기 로드
         try {
             const userRes = await fetch('/api/users/me');
             if (userRes.ok) {

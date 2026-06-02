@@ -20,9 +20,11 @@ public class CrawlingService {
 
     private final ProductRepository productRepository;
     private final PriceHistoryRepository priceHistoryRepository;
+    private final com.example.crawling.repository.BookmarkRepository bookmarkRepository;
+    private final GeminiService geminiService;
 
-    // 3시간마다 실행 (10800000ms). 한도 고려하여 너무 빈번한 실행 금지
-    @Scheduled(fixedDelay = 10800000)
+    // 30분마다 실행 (1800000ms). 한국 핫딜 특성과 쿠팡 봇 차단 방어의 최적 타협점
+    @Scheduled(fixedDelay = 1800000)
     public void crawlCoupang() {
         log.info("🚀 쿠팡 크롤링 시작 (Playwright 가동)");
         
@@ -104,7 +106,12 @@ public class CrawlingService {
             }
             context.close();
             browser.close();
-            log.info("✅ 쿠팡 크롤링 사이클 완료");
+            log.info("✅ 쿠팡 크롤링 완료. AI 요약 생성 시작...");
+            
+            java.util.List<Product> topDiscounted = productRepository.findTop10ByIsSoldOutFalseOrderByDiscountRateDesc();
+            geminiService.generateAndSaveSummary(topDiscounted);
+            
+            log.info("✅ 크롤링 및 AI 요약 사이클 최종 완료");
         } catch (Exception e) {
             log.error("Playwright 실행 중 치명적 오류 발생", e);
         }
@@ -158,6 +165,26 @@ public class CrawlingService {
                 history.setPrice(price);
                 priceHistoryRepository.save(history);
             }
+        }
+    }
+
+    // 일주일 넘게 업데이트 되지 않은 죽은 데이터 자동 청소 (매일 자정 실행)
+    @Scheduled(cron = "0 0 0 * * *")
+    @org.springframework.transaction.annotation.Transactional
+    public void cleanupOldProducts() {
+        log.info("🧹 일주일 경과된 죽은 데이터 청소 작업 시작");
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        
+        java.util.List<Product> oldProducts = productRepository.findByUpdatedAtBefore(oneWeekAgo);
+        if (!oldProducts.isEmpty()) {
+            java.util.List<Long> productIds = oldProducts.stream().map(Product::getId).toList();
+            
+            // 외래키 제약조건이 없으므로 직접 연관 데이터 삭제
+            bookmarkRepository.deleteByProductIdIn(productIds);
+            priceHistoryRepository.deleteByProductIdIn(productIds);
+            productRepository.deleteAllById(productIds);
+            
+            log.info("🧹 일주일 경과된 죽은 데이터 {}개 청소 완료", productIds.size());
         }
     }
 }

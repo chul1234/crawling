@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface PriceHistoryRepository extends JpaRepository<PriceHistory, Long> {
     List<PriceHistory> findByProductIdOrderByCreatedAtDesc(Long productId);
+
+    @org.springframework.transaction.annotation.Transactional
+    @org.springframework.data.jpa.repository.Modifying
+    void deleteByProductIdIn(List<Long> productIds);
 }

@@ -41,4 +41,11 @@ public class ProductController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/top-discount")
+    public ResponseEntity<Product> getTopDiscountProduct() {
+        return productRepository.findFirstByIsSoldOutFalseOrderByDiscountRateDesc()
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
+    }
 }
