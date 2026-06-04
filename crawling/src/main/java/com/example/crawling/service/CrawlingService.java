@@ -20,6 +20,7 @@ public class CrawlingService {
     private final PriceHistoryRepository priceHistoryRepository;
     private final com.example.crawling.repository.BookmarkRepository bookmarkRepository;
     private final GeminiService geminiService;
+    private final CoupangPartnersService coupangPartnersService;
 
     @Scheduled(fixedDelay = 1800000)
     public void crawlCoupang() {
@@ -100,6 +101,7 @@ public class CrawlingService {
             p.setDiscountRate(discountRate);
             p.setImageUrl(imageUrl);
             p.setProductUrl(productUrl);
+            p.setAffiliateUrl(coupangPartnersService.generateDeeplink(productUrl));
             p.setCategory(category); 
             p.setReviewCount(reviewCount);
             p.setIsSoldOut(isSoldOut);
@@ -120,6 +122,7 @@ public class CrawlingService {
             existingProduct.setOriginalPrice(originalPrice);
             existingProduct.setDiscountRate(discountRate);
             existingProduct.setImageUrl(imageUrl);
+            existingProduct.setAffiliateUrl(coupangPartnersService.generateDeeplink(productUrl));
             existingProduct.setReviewCount(reviewCount);
             existingProduct.setIsSoldOut(isSoldOut);
             existingProduct.setUpdatedAt(LocalDateTime.now());

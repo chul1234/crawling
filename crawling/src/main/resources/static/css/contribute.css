@@ -1,0 +1,193 @@
+.contribute-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.glass-panel {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.bookmarklet-guide {
+    text-align: center;
+}
+
+.bookmarklet-guide h2 {
+    color: #2d3436;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.bookmarklet-guide p {
+    color: #636e72;
+    margin-bottom: 10px;
+    font-size: 1.05rem;
+}
+
+.bookmarklet-box {
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(116, 185, 255, 0.1);
+    border-radius: 12px;
+    border: 1px dashed #74b9ff;
+}
+
+.bookmarklet-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: grab;
+}
+
+.bookmarklet-btn:active {
+    cursor: grabbing;
+}
+
+.bookmarklet-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.6);
+}
+
+.small-text {
+    font-size: 0.85rem !important;
+    color: #b2bec3 !important;
+}
+
+.contribute-form-wrapper h2 {
+    color: #2d3436;
+    margin-bottom: 10px;
+}
+
+.contribute-form-wrapper > p {
+    color: #636e72;
+    margin-bottom: 25px;
+}
+
+#contribute-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+}
+
+.input-row .input-group {
+    flex: 1;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: #2d3436;
+    font-size: 0.95rem;
+}
+
+.input-group input, .input-group select {
+    padding: 12px 15px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.9);
+    font-size: 1rem;
+    font-family: 'Pretendard', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-group input:focus, .input-group select:focus {
+    border-color: #6c5ce7;
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+}
+
+.image-preview {
+    width: 100%;
+    max-height: 300px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: #fdfdfd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.submit-btn {
+    background: #0984e3;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background: #74b9ff;
+}
+
+/* Dark Mode Support */
+body.dark-mode .glass-panel {
+    background: rgba(30, 39, 46, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .bookmarklet-guide h2,
+body.dark-mode .contribute-form-wrapper h2,
+body.dark-mode .input-group label {
+    color: #f1f2f6;
+}
+
+body.dark-mode .bookmarklet-guide p,
+body.dark-mode .contribute-form-wrapper > p {
+    color: #a4b0be;
+}
+
+body.dark-mode .input-group input,
+body.dark-mode .input-group select {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f1f2f6;
+}
+
+body.dark-mode .input-group input:focus,
+body.dark-mode .input-group select:focus {
+    border-color: #a29bfe;
+}
+
+body.dark-mode .image-preview {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+}

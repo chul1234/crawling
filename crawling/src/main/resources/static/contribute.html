@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>핫딜 제보하기</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/contribute.css">
+</head>
+<body>
+    <header class="glass-header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="spacer"></div>
+                <h1 onclick="location.href='/index.html'" style="cursor:pointer;">🛍️ 알짜배기 핫딜 모음</h1>
+                <div style="display: flex; gap: 10px;">
+                    <button id="theme-toggle" class="theme-btn">🌙 다크 모드</button>
+                    <button id="logout-btn" class="theme-btn" style="background: rgba(255, 71, 87, 0.2); color: #ff4757;">로그아웃</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="contribute-container">
+        <!-- 설치 안내 섹션 -->
+        <section class="bookmarklet-guide glass-panel">
+            <h2>🚀 1초 만에 핫딜 제보하기 (북마크릿)</h2>
+            <p>아래 버튼을 브라우저의 <strong>북마크(즐겨찾기) 바</strong>로 드래그해서 놓으세요.</p>
+            <p>쿠팡 상품 페이지에서 추가된 북마크를 클릭하면 이 페이지로 정보가 자동 복사됩니다!</p>
+            
+            <div class="bookmarklet-box">
+                <!-- 북마크릿 코드 -->
+                <a class="bookmarklet-btn" href="javascript:(function(){
+                    var title=document.querySelector('.prod-buy-header__title')?document.querySelector('.prod-buy-header__title').innerText:'';
+                    var price=document.querySelector('.total-price strong')?document.querySelector('.total-price strong').innerText.replace(/[^0-9]/g,''):'';
+                    var oPrice=document.querySelector('.prod-origin-price .origin-price')?document.querySelector('.prod-origin-price .origin-price').innerText.replace(/[^0-9]/g,''):price;
+                    var img=document.querySelector('.prod-image__detail')?document.querySelector('.prod-image__detail').src:'';
+                    var url=window.location.href.split('?')[0];
+                    window.location.href='http://localhost:8080/contribute.html?name='+encodeURIComponent(title)+'&price='+encodeURIComponent(price)+'&originalPrice='+encodeURIComponent(oPrice)+'&imageUrl='+encodeURIComponent(img)+'&productUrl='+encodeURIComponent(url);
+                })();" onclick="event.preventDefault(); alert('클릭하지 말고 북마크 바(주소창 아래)로 마우스를 꾹 눌러서 끌어다 놓으세요!');">➕ 쿠팡 핫딜 제보</a>
+            </div>
+            <p class="small-text">※ 크롬, 엣지, 사파리 등 모든 PC 브라우저에서 지원됩니다.</p>
+        </section>
+
+        <!-- 제보 폼 섹션 -->
+        <section class="contribute-form-wrapper glass-panel">
+            <h2>📝 제보 내용 미리보기 / 수동 등록</h2>
+            <p>가져온 정보를 확인하고 최종 등록 버튼을 눌러주세요. 오류가 있다면 직접 수정할 수 있습니다.</p>
+            
+            <form id="contribute-form">
+                <div class="input-group">
+                    <label for="name">상품명</label>
+                    <input type="text" id="name" name="name" required placeholder="예: 무라벨 생수 2L x 12병">
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="price">할인가 (현재 가격)</label>
+                        <input type="number" id="price" name="price" required placeholder="예: 8900">
+                    </div>
+                    <div class="input-group">
+                        <label for="originalPrice">원래 가격 (선택)</label>
+                        <input type="number" id="originalPrice" name="originalPrice" placeholder="예: 12000">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="category">카테고리</label>
+                    <select id="category" name="category" required>
+                        <option value="생필품">🧻 생필품</option>
+                        <option value="가전디지털">💻 가전/디지털</option>
+                        <option value="식품">🍎 식품</option>
+                        <option value="기타">✨ 기타</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="productUrl">쿠팡 상품 링크 (URL)</label>
+                    <input type="url" id="productUrl" name="productUrl" required placeholder="https://www.coupang.com/vp/products/...">
+                </div>
+
+                <div class="input-group">
+                    <label for="imageUrl">상품 이미지 링크 (URL)</label>
+                    <input type="url" id="imageUrl" name="imageUrl" required placeholder="https://thumbnail.coupangcdn.com/...">
+                </div>
+
+                <!-- 이미지 미리보기 -->
+                <div class="image-preview" id="image-preview-container" style="display:none;">
+                    <img id="image-preview-img" src="" alt="미리보기 이미지">
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn">최종 등록하기</button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-bottom">
+            &copy; 2026 알짜배기 핫딜. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="/js/toast.js"></script>
+    <script src="/js/contribute.js"></script>
+</body>
+</html>

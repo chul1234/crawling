@@ -24,6 +24,7 @@ public class Product {
     private Integer discountRate;
     private String imageUrl;
     private String productUrl;
+    private String affiliateUrl;
     private String category;
     
     @Column(columnDefinition = "int default 0")

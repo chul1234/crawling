@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="product-info">
                     <span class="category-text">${p.category || '기타'}</span>
-                    <h3 class="product-name"><a href="${p.productUrl || '#'}" target="_blank" style="text-decoration:none; color:inherit;">${p.name}</a></h3>
+                    <h3 class="product-name"><a href="${p.affiliateUrl || p.productUrl || '#'}" target="_blank" style="text-decoration:none; color:inherit;">${p.name}</a></h3>
                     <div class="price-container">
                         <div class="price-row">
                             ${discountText ? `<span class="${discountClass}">${discountText}</span>` : ''}
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         slide1.innerHTML = `
                             <h2>🔥 오늘의 초특가: ${product.discountRate}% 할인</h2>
                             <p>${product.name}</p>
-                            <a href="${product.productUrl}" target="_blank" style="display:inline-block; margin-top:10px; padding:8px 15px; background:white; color:#ff4757; text-decoration:none; border-radius:20px; font-weight:bold;">바로가기</a>
+                            <a href="${product.affiliateUrl || product.productUrl}" target="_blank" style="display:inline-block; margin-top:10px; padding:8px 15px; background:white; color:#ff4757; text-decoration:none; border-radius:20px; font-weight:bold;">바로가기</a>
                         `;
                         // 배경 이미지도 상품 이미지로 변경 (선택사항, CSS에 맞춰 어둡게 처리 필요할 수 있음)
                         document.querySelector('.slide-1').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${product.imageUrl}')`;
