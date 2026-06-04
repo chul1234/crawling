@@ -260,7 +260,8 @@
             <!-- 탭 메뉴 -->
             <div class="admin-tabs">
                 <button class="tab-btn active" data-target="panel-users">회원 관리</button>
-                <button class="tab-btn" data-target="panel-products">상품 및 크롤링 관리</button>
+                <button class="tab-btn" data-target="panel-products">크롤링 관리 (자동)</button>
+                <button class="tab-btn" data-target="panel-user-products">유저 제보 관리 (수동)</button>
             </div>
 
             <!-- 유저 관리 패널 -->
@@ -312,6 +313,29 @@
                 </table>
             </div>
 
+            <!-- 유저 제보 상품 관리 패널 -->
+            <div id="panel-user-products" class="dashboard-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">🎁 유저 직접 제보 상품 관리</h2>
+                </div>
+                
+                <table id="user-products-table">
+                    <thead>
+                        <tr>
+                            <th>이미지</th>
+                            <th>상품명</th>
+                            <th>카테고리</th>
+                            <th>할인율</th>
+                            <th>할인가</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-products-tbody">
+                        <tr><td colspan="6" style="text-align:center;">로딩 중...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </main>
 
@@ -350,7 +374,7 @@
             </form>
         </div>
     </div>
-    <script src="/js/toast.js"></script>
-    <script src="/js/admin.js"></script>
+    <script src="/js/toast.js?v=3"></script>
+    <script src="/js/admin.js?v=3"></script>
 </body>
 </html>

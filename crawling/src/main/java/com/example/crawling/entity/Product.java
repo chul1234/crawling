@@ -25,6 +25,10 @@ public class Product {
     private String imageUrl;
     private String productUrl;
     private String affiliateUrl;
+    
+    @Column(columnDefinition = "varchar(50) default 'CRAWLER'")
+    private String source;
+    
     private String category;
     
     @Column(columnDefinition = "int default 0")

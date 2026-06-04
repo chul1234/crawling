@@ -150,28 +150,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ========== 상품/크롤링 관리 ==========
     const productList = document.getElementById('products-tbody');
+    const userProductList = document.getElementById('user-products-tbody');
+    
     function loadProducts() {
         fetch('/api/admin/products')
             .then(res => res.json())
             .then(products => {
-                if (products.length === 0) {
-                    productList.innerHTML = '<tr><td colspan="6" style="text-align: center;">수집된 상품이 없습니다.</td></tr>';
-                    return;
+                console.log("Total products:", products.length);
+                if (products.length > 0) {
+                    console.log("First product source:", products[0].source);
                 }
-                productList.innerHTML = products.map(p => {
-                    const priceStr = p.discountPrice ? p.discountPrice.toLocaleString() + '원' : '가격 정보 없음';
-                    return `
-                        <tr>
-                            <td><img src="${p.imageUrl}" class="product-img-thumb" alt="상품 이미지"></td>
-                            <td style="max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${p.name}">${p.name}</td>
-                            <td>${p.category || '-'}</td>
-                            <td><span style="color:#ff4757; font-weight:bold;">${p.discountRate || 0}%</span></td>
-                            <td style="font-weight:bold;">${priceStr}</td>
-                            <td><button class="btn-danger" onclick="deleteProduct(${p.id})">삭제</button></td>
-                        </tr>
-                    `;
-                }).join('');
+                const crawlerProducts = products.filter(p => !p.source || String(p.source).trim().toUpperCase() !== 'USER');
+                const userProducts = products.filter(p => p.source && String(p.source).trim().toUpperCase() === 'USER');
+                console.log("User products count:", userProducts.length);
+                
+                renderTable(productList, crawlerProducts, '수집된 상품이 없습니다.');
+                renderTable(userProductList, userProducts, '유저가 제보한 상품이 없습니다.');
             }).catch(console.error);
+    }
+    
+    function renderTable(tbody, products, emptyMsg) {
+        if (products.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">${emptyMsg}</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = products.map(p => {
+            const priceStr = p.price ? p.price.toLocaleString() + '원' : '가격 정보 없음';
+            return `
+                <tr>
+                    <td><img src="${p.imageUrl}" class="product-img-thumb" alt="상품 이미지"></td>
+                    <td style="max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${p.name}">${p.name}</td>
+                    <td>${p.category || '-'}</td>
+                    <td><span style="color:#ff4757; font-weight:bold;">${p.discountRate || 0}%</span></td>
+                    <td style="font-weight:bold;">${priceStr}</td>
+                    <td><button class="btn-danger" onclick="deleteProduct(${p.id})">삭제</button></td>
+                </tr>
+            `;
+        }).join('');
     }
 
     window.deleteProduct = async function(productId) {

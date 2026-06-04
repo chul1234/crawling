@@ -27,7 +27,8 @@ public class CrawlingService {
         log.info("🚀 실시간 핫딜 크롤링 시작 (포트폴리오 스냅샷 모드 - 카테고리 정확도 100%)");
         
         try {
-            productRepository.deleteAll(); 
+            // CRAWLER 데이터만 삭제하고, 유저 제보(USER) 데이터는 보존합니다.
+            productRepository.deleteBySource("CRAWLER"); 
         } catch(Exception e) {
             log.error("DB 초기화 실패", e);
         }
@@ -102,6 +103,7 @@ public class CrawlingService {
             p.setImageUrl(imageUrl);
             p.setProductUrl(productUrl);
             p.setAffiliateUrl(coupangPartnersService.generateDeeplink(productUrl));
+            p.setSource("CRAWLER");
             p.setCategory(category); 
             p.setReviewCount(reviewCount);
             p.setIsSoldOut(isSoldOut);

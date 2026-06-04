@@ -37,6 +37,7 @@ public class ContributeController {
             p.setImageUrl(request.getImageUrl());
             p.setProductUrl(request.getProductUrl());
             p.setAffiliateUrl(coupangPartnersService.generateDeeplink(request.getProductUrl()));
+            p.setSource("USER");
             p.setCategory(request.getCategory() != null ? request.getCategory() : "기타");
             p.setReviewCount(0); // newly contributed
             p.setIsSoldOut(false);
