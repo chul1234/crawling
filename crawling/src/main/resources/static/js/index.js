@@ -118,11 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const cardClass = p.isSoldOut ? 'product-card sold-out' : 'product-card';
             const overlay = p.isSoldOut ? `<div class="sold-out-overlay"><span>일시품절</span></div>` : '';
             
-            // 할인율이 50 이상이면 초특가 뱃지
+            // 할인율이 50 이상이면 초특가 뱃지, 유저 제보 상품이면 프리미엄 뱃지
             let badge = '';
             let highlightClass = '';
             if (!p.isSoldOut) {
-                if (p.discountRate >= 50) {
+                if (p.source === 'USER') {
+                    badge = `<span class="badge badge-userpick">✨ 유저 픽</span>`;
+                    highlightClass = 'highlight-userpick';
+                } else if (p.discountRate >= 50) {
                     badge = `<span class="badge badge-hot">🔥 초특가</span>`;
                     highlightClass = 'highlight-card';
                 } else {
