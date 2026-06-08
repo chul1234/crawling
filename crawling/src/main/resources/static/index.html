@@ -63,6 +63,16 @@
             </div>
         </div>
 
+        <!-- 실시간 인기 핫딜 랭킹 바 -->
+        <div class="ranking-bar-container" style="max-width: 1200px; margin: 0 auto 20px auto; padding: 15px 20px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.4); display: none;" id="ranking-bar-box">
+            <h3 style="margin: 0 0 10px 0; color: #1E293B; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 1.3rem;">👑</span> 실시간 찜(🤍) 인기 랭킹 TOP 5
+            </h3>
+            <div id="ranking-list" style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px;">
+                <!-- 랭킹 아이템이 JS를 통해 렌더링 됩니다 -->
+            </div>
+        </div>
+
         <!-- AI 브리핑 영역 -->
         <div class="ai-summary-container" style="max-width: 1200px; margin: 30px auto; padding: 20px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border-radius: 15px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.4); display: none;" id="ai-summary-box">
             <h3 style="margin-top: 0; color: #ff4757; display: flex; align-items: center; gap: 8px;">

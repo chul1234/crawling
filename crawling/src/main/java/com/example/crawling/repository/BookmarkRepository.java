@@ -20,4 +20,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     @org.springframework.transaction.annotation.Transactional
     @org.springframework.data.jpa.repository.Modifying
     void deleteByProductIdIn(List<Long> productIds);
+
+    @org.springframework.data.jpa.repository.Query("SELECT b.productId FROM Bookmark b GROUP BY b.productId ORDER BY COUNT(b.productId) DESC")
+    List<Long> findTopProductIdsByBookmarkCount(org.springframework.data.domain.Pageable pageable);
 }

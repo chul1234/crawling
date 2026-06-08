@@ -246,10 +246,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 실시간 랭킹 데이터 로드
+    async function loadRanking() {
+        try {
+            const res = await fetch('/api/bookmarks/ranking');
+            if (res.ok && res.status === 200) {
+                const products = await res.json();
+                if (products && products.length > 0) {
+                    const box = document.getElementById('ranking-bar-box');
+                    const listDiv = document.getElementById('ranking-list');
+                    if (box && listDiv) {
+                        listDiv.innerHTML = products.map((p, index) => {
+                            let rankColor = index === 0 ? '#F59E0B' : (index === 1 ? '#94A3B8' : (index === 2 ? '#B45309' : '#64748B'));
+                            return `
+                                <a href="${p.affiliateUrl || p.productUrl || '#'}" target="_blank" class="ranking-item" style="display:flex; align-items:center; gap:10px; background:#fff; padding:8px 12px; border-radius:8px; border:1px solid #E2E8F0; text-decoration:none; color:inherit; min-width: 250px; flex: 0 0 auto; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+                                    <span style="font-weight:900; font-size:1.2rem; min-width:24px; text-align:center; color:${rankColor};">${index + 1}</span>
+                                    <img src="${p.imageUrl}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;">
+                                    <div style="display:flex; flex-direction:column; overflow:hidden;">
+                                        <span style="font-size:0.85rem; font-weight:600; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${p.name}</span>
+                                        <span style="font-size:0.9rem; font-weight:800; color:#EF4444;">${p.price.toLocaleString()}원</span>
+                                    </div>
+                                </a>
+                            `;
+                        }).join('');
+                        box.style.display = 'block';
+                    }
+                }
+            }
+        } catch (e) {
+            console.log('랭킹 데이터 로드 실패', e);
+        }
+    }
+
     // 초기 데이터 로드 전 찜 목록 선행 로드
     async function initData() {
         loadTopDiscountBanner(); // 배너 비동기 로드
         loadAiSummary(); // AI 브리핑 비동기 로드
+        loadRanking(); // 랭킹 비동기 로드
         try {
             const userRes = await fetch('/api/users/me');
             if (userRes.ok) {

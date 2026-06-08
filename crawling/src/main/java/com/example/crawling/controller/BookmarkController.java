@@ -61,4 +61,21 @@ public class BookmarkController {
         List<Product> bookmarkedProducts = productRepository.findAllById(productIds);
         return ResponseEntity.ok(bookmarkedProducts);
     }
+
+    // 인기 핫딜 랭킹 TOP 5 조회
+    @GetMapping("/ranking")
+    public ResponseEntity<?> getRanking() {
+        List<Long> topIds = bookmarkRepository.findTopProductIdsByBookmarkCount(org.springframework.data.domain.PageRequest.of(0, 5));
+        if (topIds.isEmpty()) {
+            return ResponseEntity.ok(List.of());
+        }
+        List<Product> products = productRepository.findAllById(topIds);
+        // findAllById는 순서를 보장하지 않으므로 topIds 순서대로 재정렬
+        List<Product> sortedProducts = topIds.stream()
+                .map(id -> products.stream().filter(p -> p.getId().equals(id)).findFirst().orElse(null))
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(sortedProducts);
+    }
 }
