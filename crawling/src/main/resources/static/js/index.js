@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="card-footer" style="display:flex; justify-content:space-between; align-items:center;">
                         <span class="review-count">⭐ 리뷰 ${p.reviewCount ? p.reviewCount.toLocaleString() : 0}</span>
-                        <a href="/price-history.html?id=${p.id}" class="history-link-btn" style="font-size:0.9rem; color:#007bff; text-decoration:none; font-weight:600;">📈 가격추이</a>
+                        ${window.isAdmin ? `<a href="/price-history.html?id=${p.id}" class="history-link-btn" style="font-size:0.9rem; color:#007bff; text-decoration:none; font-weight:600;">📈 가격추이</a>` : ''}
                     </div>
                 </div>
             </article>
@@ -288,6 +288,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (userRes.ok) {
                 const userData = await userRes.json();
                 if (userData && userData.username) {
+                    if (userData.roles && userData.roles.includes('ROLE_ADMIN')) {
+                        window.isAdmin = true;
+                    }
                     const bmRes = await fetch('/api/bookmarks/my');
                     if (bmRes.ok) {
                         const bmData = await bmRes.json();

@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const historyList = await historyRes.json();
         
         renderPriceHistory(historyList);
+        renderPriceChart(historyList);
         
     } catch (error) {
         console.error(error);
@@ -100,4 +101,81 @@ function renderPriceHistory(historyList) {
         `;
         listContainer.appendChild(li);
     }
+}
+
+function renderPriceChart(historyList) {
+    const ctx = document.getElementById('priceChart');
+    if (!ctx) return;
+
+    if (!historyList || historyList.length === 0) {
+        ctx.parentElement.innerHTML = '<div style="text-align:center; padding:50px; color:#888;">차트 데이터가 없습니다.</div>';
+        return;
+    }
+
+    // 시간 역순(과거 -> 최신)으로 뒤집기 (차트는 왼쪽에서 오른쪽으로 흐르도록)
+    const ascendingList = [...historyList].reverse();
+
+    const labels = ascendingList.map(h => {
+        const dateObj = new Date(h.createdAt);
+        return `${dateObj.getMonth() + 1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+    });
+
+    const dataPoints = ascendingList.map(h => h.price);
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '상품 가격',
+                data: dataPoints,
+                borderColor: '#FF4757',
+                backgroundColor: 'rgba(255, 71, 87, 0.15)',
+                borderWidth: 3,
+                pointBackgroundColor: '#FF4757',
+                pointBorderColor: '#fff',
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                    titleFont: { size: 13, family: 'Pretendard' },
+                    bodyFont: { size: 14, weight: 'bold', family: 'Pretendard' },
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            return ' ' + context.parsed.y.toLocaleString() + '원';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false }
+                },
+                y: {
+                    beginAtZero: false,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString() + '원';
+                        }
+                    }
+                }
+            }
+        }
+    });
 }

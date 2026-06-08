@@ -29,6 +29,16 @@
             <div style="text-align: center; padding: 20px;">로딩 중...</div>
         </section>
 
+        <!-- 1.5 가격 추이 차트 (Admin 전용 시각화) -->
+        <section class="chart-container" style="background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #E2E8F0;">
+            <h3 style="margin-top: 0; color: #1E293B; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.3rem;">📊</span> 가격 변동 시각화 차트
+            </h3>
+            <div style="position: relative; height: 350px; width: 100%;">
+                <canvas id="priceChart"></canvas>
+            </div>
+        </section>
+
         <!-- 2. 가격 변동 리스트 카드 -->
         <section class="history-card">
             <h3>최근 수집된 가격 추이</h3>
@@ -40,6 +50,7 @@
 
     <!-- 공통 Toast 알림 스크립트 -->
     <script src="/js/toast.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/js/price-history.js"></script>
 </body>
 </html>
